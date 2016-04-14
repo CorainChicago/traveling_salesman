@@ -3,6 +3,7 @@ require 'bigdecimal'
 
 class TravelingSalesman
 
+  attr_accessor :cities, :point_of_origin
   def initialize(cities)
     unless cities.is_a? Array 
       raise "Please provide an array"
@@ -17,26 +18,38 @@ class TravelingSalesman
 
 
   def selection_sort
-    all_cities = @point_of_origin + @cities
+    all_cities = @cities
     n = all_cities.length
-    all_cities.each_with_index do |city, index|
-      pos = find_item_with_minimum_distance all_cities, index, n
-      if pos != index
+    for index in 0...n do
+      anchor = if index = 0
+        @point_of_origin
+      else
+        anchor[index-1]
+      end
+      pos = find_item_with_minimum_distance all_cities, anchor, index, n-1
+      if pos != -1
         all_cities[index], all_cities[pos] = all_cities[pos], all_cities[index]
       end
     end
+    tsp.cities
   end
 
-  def find_item_with_minimum_distance array, left, right
-
-      item_with_minimum_distance = left
-      minimum_distance = 0
-      array[left..right].each do | item |
-          if distance(array[left], item) < minimum_distance
-              item_with_minimum_distance = item
+  # look at all element in array
+  # find item with smallest distance from the ith element
+  def find_item_with_minimum_distance array, anchor, left, right
+      item_with_minimum_distance = -1
+      minimum_distance = -1
+      # return -1 if empty array
+      # start with left to right to find smallest distance to array[i]
+      # loop through to find item/index with smallest array
+      array[left..right].each_with_index do | item, index |
+          distance = distance(anchor, item)
+          if distance < minimum_distance || minimum_distance == -1
+              item_with_minimum_distance = index + left
+              minimum_distance = distance
           end
       end
-
+      item_with_minimum_distance
   end
 
   def distance(item1, item2)
