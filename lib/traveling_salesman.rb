@@ -3,6 +3,7 @@ require 'bigdecimal'
 
 class TravelingSalesman
 
+  attr_accessor :cities, :point_of_origin
   def initialize(cities)
     unless cities.is_a? Array 
       raise "Please provide an array"
@@ -32,11 +33,16 @@ class TravelingSalesman
       item_with_minimum_distance = left
       minimum_distance = 0
       array[left..right].each do | item |
+          if minimum_distance == 0
+            item_with_minimum_distance = item
+            minimum_distance = distance(array[left], item)
+            break 
+          end
           if distance(array[left], item) < minimum_distance
               item_with_minimum_distance = item
           end
       end
-
+      item_with_minimum_distance
   end
 
   def distance(item1, item2)
